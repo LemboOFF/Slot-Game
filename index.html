@@ -2,29 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Fruit Freight</title>
+  <title>Slot Machine</title>
+
   <style>
-    @font-face {
-      font-family: 'GameFont';
-      src: url('assets/font/GameFont.ttf') format('truetype');
-      font-display: swap;
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #111;
+      color: white;
+      margin-top: 50px;
     }
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    canvas { display: block; }
+
+    .reels {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    img {
+      width: 120px;
+      height: 120px;
+      background: #222;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .win {
+      border: 4px solid gold;
+      box-shadow: 0 0 15px gold;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background: #ffcc00;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 24px;
+    }
   </style>
 </head>
+
 <body>
-  <canvas id="gameCanvas"></canvas>
-  <script src="assets/js/images.js"></script>
-  <script src="assets/js/audio.js"></script>
-  <script src="assets/js/player.js"></script>
-  <script src="assets/js/boss.js"></script>
-  <script src="assets/js/minions.js"></script>
-  <script src="assets/js/projectiles.js"></script>
-  <script src="assets/js/puddles.js"></script>
-  <script src="assets/js/ui.js"></script>
-  <script src="assets/js/main.js"></script>
+
+  <h1>🎰 Slot Machine</h1>
+
+  <div class="reels">
+    <img id="reel1" src="assets/sprites/cherry.png" />
+    <img id="reel2" src="assets/sprites/lemon.png" />
+    <img id="reel3" src="assets/sprites/orange.png" />
+  </div>
+
+  <button id="spinBtn">SPIN</button>
+
+  <div id="result"></div>
+
+  <!-- your JS -->
+  <script>
+    const symbols = [
+      "assets/sprites/cherry.png",
+      "assets/sprites/lemon.png",
+      "assets/sprites/orange.png",
+      "assets/sprites/watermelon.png",
+      "assets/sprites/star.png",
+      "assets/sprites/diamond.png"
+    ];
+
+    const reel1 = document.getElementById("reel1");
+    const reel2 = document.getElementById("reel2");
+    const reel3 = document.getElementById("reel3");
+
+    const result = document.getElementById("result");
+
+    const spinSound = new Audio("assets/sound/spin.mp3");
+    const winSound = new Audio("assets/sound/win.mp3");
+
+    document.getElementById("spinBtn").addEventListener("click", spin);
+
+    function getRandomSymbol() {
+      return symbols[Math.floor(Math.random() * symbols.length)];
+    }
+
+    function startSpinning(reel) {
+      return setInterval(() => {
+        reel.src = getRandomSymbol();
+      }, 80);
+    }
+
+    function spin() {
+      result.textContent = "";
+
+      spinSound.currentTime = 0;
+      spinSound.play();
+
+      reel1.classList.remove("win");
+      reel2.classList.remove("win");
+      reel3.classList.remove("win");
+
+      const spin1 = startSpinning(reel1);
+      const spin2 = startSpinning(reel2);
+      const spin3 = startSpinning(reel3);
+
+      setTimeout(() => clearInterval(spin1), 800);
+      setTimeout(() => clearInterval(spin2), 1200);
+
+      setTimeout(() => {
+        clearInterval(spin3);
+        finalizeSpin();
+      }, 1600);
+    }
+
+    function finalizeSpin() {
+      const s1 = getRandomSymbol();
+      const s2 = getRandomSymbol();
+      const s3 = getRandomSymbol();
+
+      reel1.src = s1;
+      reel2.src = s2;
+      reel3.src = s3;
+
+      if (s1 === s2 && s2 === s3) {
+        result.textContent = "🎉 JACKPOT!!!";
+
+        reel1.classList.add("win");
+        reel2.classList.add("win");
+        reel3.classList.add("win");
+
+        winSound.currentTime = 0;
+        winSound.play();
+      } else {
+        result.textContent = "Try again!";
+      }
+    }
+  </script>
+
 </body>
 </html>

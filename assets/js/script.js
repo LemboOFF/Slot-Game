@@ -14,9 +14,10 @@ const reel3 = document.getElementById("reel3");
 
 const result = document.getElementById("result");
 
-// sounds (optional but included)
-const spinSound = new Audio("assets/sound/spin.mp3");
-const winSound = new Audio("assets/sound/win.mp3");
+// sounds
+const spinSound = new Audio("assets/sound/spin.ogg");
+const winSound = new Audio("assets/sound/win.ogg");
+const loseSound = new Audio("assets/sound/lose.ogg"); // optional
 
 // spin button
 document.getElementById("spinBtn").addEventListener("click", spin);
@@ -37,9 +38,11 @@ function startSpinning(reel) {
 function spin() {
   result.textContent = "";
 
-  // play spin sound
+  // delayed spin sound (1.45s)
   spinSound.currentTime = 0;
-  spinSound.play();
+  setTimeout(() => {
+    spinSound.play();
+  }, 1450);
 
   // remove win styling
   reel1.classList.remove("win");
@@ -83,5 +86,9 @@ function finalizeSpin() {
     winSound.play();
   } else {
     result.textContent = "Try again!";
+
+    // play lose sound
+    loseSound.currentTime = 0;
+    loseSound.play();
   }
 }
